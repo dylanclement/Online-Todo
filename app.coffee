@@ -21,6 +21,7 @@ app.use require('coffee-middleware')
   compress: true
 
 app.use express.static(path.join(__dirname, 'public'))
+app.use express.static(path.join(__dirname, 'vendor'))
 
 # development only
 if 'development' == app.get 'env'
