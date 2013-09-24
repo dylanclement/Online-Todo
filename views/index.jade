@@ -1,7 +1,10 @@
 extends layout
 
 block content
-  div.container
+  div.container(ng-controller='TodoCtrl')
     div.content
       div.span3.offset3
-        p Hallo World!
+        li(ng-repeat='todo in todos')
+          input(type='checkbox', ng-model='todo.done')
+          span(class='done-{{todo.done}}')
+            {{todo.text}}
