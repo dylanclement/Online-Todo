@@ -1,6 +1,6 @@
 class window.TodoCtrl
-  constructor: ($scope) ->
-    $scope.todos = [
-      {text:'learn angular', done:true}
-      {text:'build an angular app', done:false}
-    ]
+  constructor: ($scope, $http) ->
+    $http.get('/todos')
+      .success (todos) ->
+        $scope.todos = todos
+        console.log 'Todos = ', $scope.todos

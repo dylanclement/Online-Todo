@@ -8,6 +8,7 @@
   "dependencies": {
     "express": "3.4.0",
     "coffee-middleware": ">= 0.2.0",
+    "mongoose": ">= 3.6.20",
     "jade": "*",
     "stylus": "*"
   },
@@ -16,6 +17,6 @@
     "supervisor": ">= 0.5.6"
   },
   "scripts" : {
-    "watch": "supervisor -w routes,. -e coffee app.coffee"
+    "run": "supervisor -w routes,. -e coffee app.coffee"
   }
 }
