@@ -34,6 +34,9 @@ if 'development' == app.get 'env'
 
 app.get '/', routes.index
 app.get '/todos', todoRoutes.list
+app.post '/todos', todoRoutes.add
+app.put '/todo/:id', todoRoutes.update
+app.del '/todo/:id', todoRoutes.del
 
 http.createServer(app).listen app.get('port'), ->
   console.log "Express server listening on port #{app.get('port')}"

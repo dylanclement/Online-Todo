@@ -2,9 +2,20 @@ extends layout
 
 block content
   div.container(ng-controller='TodoCtrl')
+    h3 Todo List
     div.content
-      div.span3.offset3
+      div.span3
         li(ng-repeat='todo in todos')
-          input(type='checkbox', ng-model='todo.done')
-          span(class='done-{{todo.done}}')
-            {{todo.description}}
+          //- input(type='checkbox', ng-model='todo.done')
+          div(ng-show='todo.editing')
+            input(ng-model='todo.description', type='text')
+            button(ng-show='todo.editing', ng-click='save(todo)') Save
+          div(ng-hide='todo.editing')
+            span(class='done-{{todo.done}}', ng-click='editItem(todo)')
+              {{todo.description}}
+            button(ng-hide='todo.editing', ng-click='del(todo)') Delete
+        .well
+          input(ng-model='newTodo.description', type='text', placeholder='description')
+          button(ng-click='add(newTodo)') Add
+
+  script(src='./javascripts/controllers/todo.js')
