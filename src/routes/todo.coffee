@@ -1,23 +1,30 @@
 Todo = require '../models/todo'
 
-# instanciate the todo class
+# instantiate the todo class
 todo = new Todo
 
 exports.list = (req, res, next) ->
   todo.getAll (err, todos) ->
+    console.log 'Todos =', todos
+    if err then return next err
+
     res.json todos
+
 
 exports.add = (req, res, next) ->
   newTodo = req.body
   todo.add newTodo.description, null, null, (err, newTodo) ->
     if err then return next err
+
     return res.json newTodo
+
 
 exports.update = (req, res, next) ->
   editedTodo = req.body
   console.log 'Editing ', editedTodo
   todo.save editedTodo, (err, item) ->
     if err then return next err
+
     return res.json item
 
 exports.del = (req, res, next) ->
@@ -25,4 +32,13 @@ exports.del = (req, res, next) ->
   console.log 'Deleting todo', id
   todo.del id, (err, item) ->
     if err then return next err
+
+    return res.json {success: true}
+
+exports.reOrder = (req, res, next) ->
+  start = req.body.start
+  end = req.body.end
+  todo.reOrder start, end, (err) ->
+    if err then return next err
+
     return res.json {success: true}

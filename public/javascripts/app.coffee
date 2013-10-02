@@ -1,1 +1,2 @@
-console.log 'Test TODO App starting'
+$ ->
+  console.log 'Test TODO App starting'

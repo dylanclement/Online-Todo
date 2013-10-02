@@ -12,22 +12,28 @@ module.exports = class Todo
   constructor: ->
 
   getAll: (cb) ->
-    @todo.find (err, todos) ->
+    @todo.find().sort(pos: 1).exec (err, todos) ->
       if err then cb err
       return cb null, todos
 
   getNextPos: (cb) ->
     # Find the highest pos value and return that + 1
+    # TODO! what about findOne().sort(pos: -1) ?
     @todo.find (err, todos) ->
       if err then cb err
 
+      # Cater for an empty list
+      if !todos.length then return cb null, 0
+
       maxPos = _.max todos, (todo) -> return todo.pos
-      return cb null, maxPos + 1
+      console.log 'Next pos = ', maxPos.pos
+      return cb null, maxPos.pos + 1
 
 
   add: (description, due, pos, cb) ->
     # Get the max pos and use that if undefined
-    if !pos then return @getNextPos (err, maxPos) =>
+    if !pos? then return @getNextPos (err, maxPos) =>
+
       if err then return cb err
       return @add description, due, maxPos, cb
 
@@ -57,3 +63,34 @@ module.exports = class Todo
 
       console.log 'Removing item', item
       item.remove cb
+
+  reOrder: (start, end, cb) ->
+    console.log 'Re-Ordering ', start, end
+    @todo.find().sort(pos: 1).exec (err, todos) ->
+      if err then return cb err
+
+      #moved up
+      if start > end
+        todos.map (todo) ->
+          # update the initial element
+          if todo.pos == start
+            todo.pos = end
+            todo.save()
+          # move the ones in between up +1
+          else if end <= todo.pos < start
+            todo.pos += 1
+            console.log 'Updating todo', todo
+            todo.save()
+      # moved down
+      else if start < end
+        todos.map (todo) ->
+          # update the initial element
+          if todo.pos == start
+            todo.pos = end
+            todo.save()
+          # move the ones in between up +1
+          else if start < todo.pos <= end
+            todo.pos -= 1
+            console.log 'Updating todo', todo
+            todo.save()
+      cb()
