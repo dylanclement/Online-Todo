@@ -5,6 +5,16 @@ block content
     h3 Todo List
     div.content
       ul.sortable.span3
+        input(
+          type="text"
+          datepicker-popup="dd-MMMM-yyyy"
+          ng-model="date"
+          open="opened"
+          min="minDate"
+          max="'2015-06-22'"
+          datepicker-options="dateOptions"
+          date-disabled="disabled(date, mode)"
+          ng-required="true")
         li(ng-repeat='todo in todos')
           //- input(type='checkbox', ng-model='todo.done')
           div.ui-state-default(ng-show='todo.editing')

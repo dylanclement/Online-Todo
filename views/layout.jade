@@ -1,5 +1,5 @@
 doctype 5
-html(ng-app)
+html(ng-app='todo')
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
@@ -10,6 +10,8 @@ html(ng-app)
     script(src='//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js')
     script(src='//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js')
     script(src='/bootstrap/js/bootstrap.min.js')
+    script(src='/bootstrap/js/ui-bootstrap-tpls-0.6.0.js')
+    //- script(src='/bootstrap/js/ui-bootstrap-0.6.0.js')
     script(src='./javascripts/app.js')
   body
     block content
