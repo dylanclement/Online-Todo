@@ -2,7 +2,9 @@ extends layout
 
 block content
   div.container(ng-controller='TodoCtrl')
+    a.btn.pull-right(href='/logout') Logout
     h1 Dylan's online TODO list
+
     .well.row
       p.lead
         | You can <strong popover="Enter a description in the form below and click add." popover-trigger="mouseenter" >add</strong> items,

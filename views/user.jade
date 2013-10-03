@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  p #{msg}
+  if msg
+    .alert.alert-warning #{msg}
+  div.container(ng-controller='UserCtrl')
+    .row
+      .span2 UserName:
+      input.span3(ng-model='user.username', type='text', placeholder='User Name')
+    .row
+      .span2 Password:
+      input.span3(ng-model='user.password', type='password', placeholder='Password')
+    button.span1(ng-click='login(user)') Login
+    button.span1(ng-click='register(user)') Register
+
+  script(src='./javascripts/controllers/user.js')

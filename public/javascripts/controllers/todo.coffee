@@ -94,9 +94,9 @@ class window.TodoCtrl
       .error alert
 
   sortTodos: ->
-    if sortMode == 'Priority'
+    if @sortMode == 'Priority'
       @scope.todos.sort (a, b) -> return a.pos - b.pos
-    else if sortMode == 'DueDate'
+    else if @sortMode == 'DueDate'
       @scope.todos.sort (a, b) ->
         return new Date(b.due ? '1970-01-01') - new Date(a.due ? '1970-01-01')
 

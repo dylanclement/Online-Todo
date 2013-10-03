@@ -7,6 +7,9 @@
     "coffee-middleware": ">= 0.2.0",
     "mongoose": ">= 3.6.20",
     "passport": ">= 0.1.17",
+    "passport-local": ">= 0.1.6",
+    "bcrypt": ">= 0.7.7",
+    "connect-flash": ">= 0.1.1",
     "jade": "*",
     "stylus": "*"
   },
@@ -15,7 +18,7 @@
     "supervisor": ">= 0.5.6"
   },
   "scripts" : {
-    "run": "supervisor -w routes,. -e coffee app.coffee",
-    "start": "node app.js"
+    "watch": "supervisor -w src,. -e coffee app.coffee",
+    "start": "node server.js"
   }
 }
