@@ -66,12 +66,29 @@ module.exports = class Todo
       item.save cb
 
   del: (id, cb) ->
-    @todo.findById id, (err, item) ->
+    @todo.findById id, (err, item) =>
       if err then return cb err
       if !item then return cb new Error "Unable to find todo item #{id}, #{item}"
 
       console.log 'Removing item', item
-      item.remove cb
+      item.remove (err) =>
+        if err then return err
+
+        # move all elements below it up the priority chain
+        # first get all todo items
+        @todo.find().sort(pos: 1).exec (err, todos) ->
+          if err then cb err
+
+          # loop through them and move anything that was higher up down 1
+          retTodos = todos.forEach (todo) ->
+            if todo.pos > item.pos
+              todo.pos -= 1
+              console.log 'Saving todo', todo
+              todo.save()
+              return todo
+
+          # return the new list to the front end
+          cb null, retTodos
 
   reOrder: (start, end, cb) ->
     console.log 'Re-Ordering ', start, end
@@ -88,7 +105,6 @@ module.exports = class Todo
           # move the ones in between up +1
           else if end <= todo.pos < start
             todo.pos += 1
-            console.log 'Updating todo', todo
             todo.save()
       # moved down
       else if start < end
@@ -100,6 +116,5 @@ module.exports = class Todo
           # move the ones in between up +1
           else if start < todo.pos <= end
             todo.pos -= 1
-            console.log 'Updating todo', todo
             todo.save()
       cb()
