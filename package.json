@@ -1,14 +1,12 @@
 {
-  "name": "application-name",
+  "name": "dylan-todo-sample",
   "version": "0.0.1",
   "private": true,
-  "scripts": {
-    "start": "node app.js"
-  },
   "dependencies": {
     "express": "3.4.0",
     "coffee-middleware": ">= 0.2.0",
     "mongoose": ">= 3.6.20",
+    "passport": ">= 0.1.17",
     "jade": "*",
     "stylus": "*"
   },
@@ -17,6 +15,7 @@
     "supervisor": ">= 0.5.6"
   },
   "scripts" : {
-    "run": "supervisor -w routes,. -e coffee app.coffee"
+    "run": "supervisor -w routes,. -e coffee app.coffee",
+    "start": "node app.js"
   }
 }
