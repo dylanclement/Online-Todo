@@ -11,10 +11,16 @@ module.exports = class Todo
 
   constructor: ->
 
+  get: (id, cb) ->
+    @todo.findOne _id: id, (err, todo) ->
+      if err then cb err
+      return cb null, todo
+
   getAll: (cb) ->
     @todo.find().sort(pos: 1).exec (err, todos) ->
       if err then cb err
       return cb null, todos
+
 
   getNextPos: (cb) ->
     # Find the highest pos value and return that + 1
@@ -48,11 +54,14 @@ module.exports = class Todo
     todo.save cb
 
   save: (todo, cb) ->
+    console.log 'Saving todo', todo
     @todo.findById todo._id, (err, item) ->
       if err then return cb err
       if !item then return cb new Error "Unable to find todo item #{id}, #{item}"
 
       item.description = todo.description
+      item.due = todo.due
+      item.done = todo.done
       console.log 'Saving item', item
       item.save cb
 

@@ -2,9 +2,10 @@ class window.TodoCtrl
   constructor: ($scope, $http) ->
 
     # populate data
+    window.scope = $scope
     $http.get('/todos')
       .success (todos) ->
-        $scope.todos = todos
+        window.todos = $scope.todos = todos
       .error alert
 
 
@@ -27,23 +28,31 @@ class window.TodoCtrl
         .error alert
 
 
-    # toggle edit mode
-    $scope.editItem = (todo) ->
-      todo.editing = !todo.editing
-
-
     $scope.save = (todo) ->
       console.log 'Saving todo', todo
       $http.put("/todo/#{todo._id}", todo)
         .success (todo) ->
-          $scope.todos.map (item) ->
+          $scope.todos.forEach (item) ->
             if item._id == todo._id
               item.editing = false
           console.log 'Successfully saved on back end', todo
         .error alert
 
 
-    $scope.dragStart = (e, ui) ->   ui.item.data 'start', ui.item.index()
+    $scope.cancel = (todo) ->
+      $http.get("/todo/#{todo._id}", todo)
+        .success (oldTodo) ->
+          $scope.todos.forEach (item) ->
+            if item._id == oldTodo._id
+              item.editing = false
+              todo.description = oldTodo.description
+              todo.due = oldTodo.due
+              todo.done = oldTodo.done
+        .error alert
+
+    $scope.editItem = (todo) -> todo.editing = !todo.editing
+
+    $scope.dragStart = (e, ui) -> ui.item.data 'start', ui.item.index()
 
     $scope.dragEnd = (e, ui) ->
       change =

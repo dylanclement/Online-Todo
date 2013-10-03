@@ -13,11 +13,16 @@ exports.list = (req, res, next) ->
 
 exports.add = (req, res, next) ->
   newTodo = req.body
-  todo.add newTodo.description, null, null, (err, newTodo) ->
+  todo.add newTodo.description, newTodo.due, newTodo.pos, (err, newTodo) ->
     if err then return next err
 
     return res.json newTodo
 
+exports.get = (req, res, next) ->
+  todo.get req.params.id, (err, todo) ->
+    if err then return next err
+
+    res.json todo
 
 exports.update = (req, res, next) ->
   editedTodo = req.body

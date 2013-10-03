@@ -14,7 +14,8 @@ db.once 'open', -> console.log 'Opened connection to DB!'
 app.set 'port', process.env.PORT || 3000
 app.set 'views', "#{__dirname}/views"
 app.set 'view engine', 'jade'
-app.use express.favicon()
+app.set 'title', 'Dylan\'s TODO app'
+# app.use express.favicon()
 app.use express.logger 'dev'
 app.use express.bodyParser()
 app.use express.methodOverride()
@@ -36,9 +37,10 @@ if 'development' == app.get 'env'
 app.get '/', routes.index
 app.get '/todos', todoRoutes.list
 app.post '/todos', todoRoutes.add
+app.get '/todo/:id', todoRoutes.get
 app.put '/todo/:id', todoRoutes.update
 app.del '/todo/:id', todoRoutes.del
 app.post '/todos/re-order', todoRoutes.reOrder
 
 http.createServer(app).listen app.get('port'), ->
-  console.log "Express server listening on port #{app.get('port')}"
+  console.log "Todo app server listening on port #{app.get('port')}"

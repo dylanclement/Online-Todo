@@ -2,30 +2,59 @@ extends layout
 
 block content
   div.container(ng-controller='TodoCtrl')
-    h3 Todo List
-    div.content
-      ul.sortable.span3
-        input(
+    h1 Dylan's online TODO list
+    .logo.pull-right
+    .well.row
+      p.lead
+        | You can <strong popover="Enter a description in the form below and click add." popover-trigger="mouseenter" >add</strong> items,
+        | <strong popover="Drag items up to give a higher priority, or down to de-prioritize." popover-trigger="mouseenter" >re-prioritise</strong> items,
+        | <strong popover="Click on the description to edit an item." popover-trigger="mouseenter" >edit</strong> items,
+        | set the <strong popover="When editing/adding an item you can set the due date." popover-trigger="mouseenter" >due date</strong> and
+        | mark an item as <strong popover="Items marked as done will have a green colour." popover-trigger="mouseenter" >done</strong>.
+    .content
+      ul.sortable
+        li.row.todo-item(ng-repeat='todo in todos', class='done-{{todo.done}}')
+          //- input(type='checkbox', ng-model='todo.done')
+          div(ng-hide='todo.editing')
+            a.span3(ng-click='editItem(todo)') {{todo.description}}
+            .span3 {{todo.due | date:'fullDate'}}
+            button.close(type='button', ng-click='del(todo)', aria-hidden='true') &times;
+          div.span3.ui-state-default(ng-show='todo.editing')
+            p Description
+            input.span3(ng-model='todo.description', type='text', placeholder='description')
+            p Due Date
+            input.span3(
+              type="text"
+              datepicker-popup="dd-MMMM-yyyy"
+              ng-model="todo.due"
+              open="opened"
+              min="minDate"
+              max="'2015-06-22'"
+              datepicker-options="dateOptions"
+              date-disabled="disabled(date, mode)"
+              ng-required="false")
+            input(type='checkbox', ng-model='todo.done')
+            .span1 Done
+            div
+              button.span1(ng-click='save(todo)') Save
+              button.span1(ng-click='cancel(todo)') Cancel
+            //- button(ng-hide='todo.editing', ng-click='del(todo)') Delete
+      .well.row
+        p.lead Add a new item to the todo list
+        p Description
+        input.span3(ng-model='newTodo.description', type='text', placeholder='description')
+        p Due Date
+        input.span3(
           type="text"
           datepicker-popup="dd-MMMM-yyyy"
-          ng-model="date"
+          ng-model="newTodo.due"
           open="opened"
           min="minDate"
           max="'2015-06-22'"
           datepicker-options="dateOptions"
           date-disabled="disabled(date, mode)"
-          ng-required="true")
-        li(ng-repeat='todo in todos')
-          //- input(type='checkbox', ng-model='todo.done')
-          div.ui-state-default(ng-show='todo.editing')
-            input(ng-model='todo.description', type='text')
-            button(ng-show='todo.editing', ng-click='save(todo)') Save
-          div(ng-hide='todo.editing')
-            span(class='done-{{todo.done}}', ng-click='editItem(todo)')
-              {{todo.description}}
-            button(ng-hide='todo.editing', ng-click='del(todo)') Delete
-        .well
-          input(ng-model='newTodo.description', type='text', placeholder='description')
-          button(ng-click='add(newTodo)') Add
+          ng-required="false")
+        div
+          button.add(ng-click='add(newTodo)') Add
 
   script(src='./javascripts/controllers/todo.js')

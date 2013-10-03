@@ -6,5 +6,22 @@ a {
   color: #00b7ff;
 }
 .content {
-  background-color: #eee;
+  background-color: #fff;
+}
+.logo {
+  background: url("/images/list-logo.png") #fff no-repeat 0 0;
+}
+ul.sortable {
+  list-style-type: none;
+  margin: 20px;
+}
+.todo-item {
+  background-color: #eef;
+  padding: 5px;
+  margin: 5px 0;
+  border: 1px solid #d3d3d3;
+}
+.done-true {
+  color: #008000;
+  background-color: #efe;
 }
