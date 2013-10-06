@@ -12,7 +12,7 @@ class window.TodoCtrl
       # this method might get called before the items are loaded
       if !@scope.todos then return
       console.log 'Sort Mode = ', sortMode
-      @sortTodos()
+      @sortTodos(sortMode)
 
 
     @scope.add = (newTodo) =>
@@ -93,10 +93,14 @@ class window.TodoCtrl
         window.todos = @scope.todos = todos
       .error alert
 
-  sortTodos: ->
+  sortTodos: (sortMode)->
+    if sortMode then @sortMode = sortMode # set the sort mode if it is passed in
+
     if @sortMode == 'Priority'
       @scope.todos.sort (a, b) -> return a.pos - b.pos
+
     else if @sortMode == 'DueDate'
       @scope.todos.sort (a, b) ->
         return new Date(b.due ? '1970-01-01') - new Date(a.due ? '1970-01-01')
+    console.log @scope.todos, @sortMode
 
