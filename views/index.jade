@@ -1,8 +1,8 @@
 extends layout
 
 block content
-  div.container(ng-controller='TodoCtrl')
-    a.btn.pull-right(href='/logout') Logout
+  div.container(ng-controller='TodoCtrl', ng-init="setUser('#{user.username}', '#{user.password}', '#{user._id}')")
+    a.btn.pull-right(href='/logout') Logout #{user.username}
     h1 Dylan's online TODO list
 
     .well.row
@@ -62,6 +62,6 @@ block content
           date-disabled="disabled(date, mode)"
           placeholder='due date'
           ng-required="false")
-        button.span1.add(ng-click='add(newTodo)') Add
+        button.btn-primary.span1.add(ng-click='add(newTodo)') Add
 
   script(src='./javascripts/controllers/todo.js')

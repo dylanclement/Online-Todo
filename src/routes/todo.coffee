@@ -4,7 +4,7 @@ Todo = require '../models/todo'
 todo = new Todo
 
 exports.list = (req, res, next) ->
-  todo.getAll (err, todos) ->
+  todo.getAll req.user._id, (err, todos) ->
     console.log 'Todos =', todos
     if err then return next err
 
@@ -13,7 +13,8 @@ exports.list = (req, res, next) ->
 
 exports.add = (req, res, next) ->
   newTodo = req.body
-  todo.add newTodo.description, newTodo.due, newTodo.pos, (err, newTodo) ->
+  console.log 'New Todo = ', newTodo
+  todo.add newTodo.description, newTodo.due, newTodo.pos, req.user.id, (err, newTodo) ->
     if err then return next err
 
     return res.json newTodo
@@ -35,7 +36,7 @@ exports.update = (req, res, next) ->
 exports.del = (req, res, next) ->
   id = req.params.id
   console.log 'Deleting todo', id
-  todo.del id, (err, item) ->
+  todo.del id, req.user.id, (err, item) ->
     if err then return next err
 
     return res.json {success: true}
@@ -43,7 +44,8 @@ exports.del = (req, res, next) ->
 exports.reOrder = (req, res, next) ->
   start = req.body.start
   end = req.body.end
-  todo.reOrder start, end, (err) ->
+  console.log 'Trying to re-order', start, end, req.user.id
+  todo.reOrder start, end, req.user.id, (err) ->
     if err then return next err
 
     return res.json {success: true}

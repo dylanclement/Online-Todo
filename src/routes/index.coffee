@@ -1,11 +1,10 @@
 auth = require '../auth'
 
 exports.index = (req, res) ->
-  res.render 'index', title: 'Dylan\'s TODO app'
+  res.render 'index', title: 'Dylan\'s TODO app', user: req.user
 
 exports.login = (req, res) ->
   msg = req.flash('error')[0]
-  console.log msg
   res.render 'user', {msg}
 
 exports.register = (req, res, next) ->

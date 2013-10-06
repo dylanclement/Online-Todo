@@ -3,20 +3,29 @@ class window.TodoCtrl
 
     @scope = $scope
     @http = $http
-    # populate data
 
+    # TODO! Debug code, remove
     window.scope = @scope
+    # populate data
     @loadTodos()
     @scope.sortMode = 'Priority'
     @scope.$watch 'sortMode', (sortMode) =>
       # this method might get called before the items are loaded
       if !@scope.todos then return
       console.log 'Sort Mode = ', sortMode
-      @sortTodos(sortMode)
+      # TODO! If sortMode = due date disable sorting the list
+      @sortTodos sortMode
 
+    @scope.setUser = (username, password, id) =>
+      @user = {username, password, id}
+      console.log 'User =', @user
 
     @scope.add = (newTodo) =>
-      @http.post('/todos', newTodo)
+
+      if !newTodo?.description then return console.log 'Empty description, not saving'
+      # newTodo.user = @user
+      console.log 'newTodo =', newTodo
+      @http.post('/app/todos', newTodo)
         .success (newTodo) =>
           # add the item to the list
           @scope.todos.push newTodo
@@ -26,7 +35,7 @@ class window.TodoCtrl
 
     @scope.del = (todo) =>
       console.log 'Deleting todo', todo
-      @http.delete("/todo/#{todo._id}")
+      @http.delete("/app/todo/#{todo._id}")
         .success (todos) =>
           # remove the item from the list and update the priorities
           @scope.todos = @scope.todos.filter (item) -> item._id != todo._id
@@ -36,7 +45,7 @@ class window.TodoCtrl
 
     @scope.save = (todo) =>
       console.log 'Saving todo', todo
-      @http.put("/todo/#{todo._id}", todo)
+      @http.put("/app/todo/#{todo._id}", todo)
         .success (todo) =>
           @scope.todos.forEach (item) ->
             if item._id == todo._id
@@ -46,7 +55,7 @@ class window.TodoCtrl
 
 
     @scope.cancel = (todo) =>
-      @http.get("/todo/#{todo._id}", todo)
+      @http.get("/app/todo/#{todo._id}", todo)
         .success (oldTodo) =>
           @scope.todos.forEach (item) ->
             if item._id == oldTodo._id
@@ -71,7 +80,7 @@ class window.TodoCtrl
       console.log 'Reodering', change
 
       # update the order in the back end
-      @http.post('/todos/re-order', change)
+      @http.post('/app/todos/re-order', change)
         .success =>
           console.log "Dragged from #{change.start} to #{change.end}.", @scope.todos
         .error alert
@@ -87,7 +96,7 @@ class window.TodoCtrl
   # class methods
   ###################################################################
   loadTodos: ->
-    @http.get('/todos')
+    @http.get('/app/todos')
       .success (todos) =>
         # TODO! Remove the window.scope debugging code
         window.todos = @scope.todos = todos

@@ -11,7 +11,7 @@ block content
     .row
       .span2 Password:
       input.span3(ng-model='user.password', type='password', placeholder='Password')
-    button.span1(ng-click='login(user)') Login
+    button.btn-primary.span1(ng-click='login(user)') Login
     button.span1(ng-click='register(user)') Register
 
   script(src='./javascripts/controllers/user.js')

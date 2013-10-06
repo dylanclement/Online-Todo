@@ -8,40 +8,41 @@ module.exports = class Todo
     done: Boolean
     due: Date
     pos: Number
+    user: String
 
   constructor: ->
 
   get: (id, cb) ->
-    @todo.findOne _id: id, (err, todo) ->
+    @todo.findById id, (err, todo) ->
       if err then cb err
       return cb null, todo
 
-  getAll: (cb) ->
-    @todo.find().sort(pos: 1).exec (err, todos) ->
+  getAll: (user, cb) ->
+    @todo.find({user}).sort(pos: 1).exec (err, todos) ->
       if err then cb err
       return cb null, todos
 
 
-  getNextPos: (cb) ->
+  getNextPos: (user, cb) ->
     # Find the highest pos value and return that + 1
     # TODO! what about findOne().sort(pos: -1) ?
-    @todo.find (err, todos) ->
+    @todo.find({user}).exec (err, todos) ->
       if err then cb err
 
       # Cater for an empty list
       if !todos.length then return cb null, 0
 
       maxPos = _.max todos, (todo) -> return todo.pos
-      console.log 'Next pos = ', maxPos.pos
       return cb null, maxPos.pos + 1
 
 
-  add: (description, due, pos, cb) ->
+  add: (description, due, pos, user, cb) ->
+    console.log 'Add', description, due, pos, user
     # Get the max pos and use that if undefined
-    if !pos? then return @getNextPos (err, maxPos) =>
+    if !pos? then return @getNextPos user, (err, maxPos) =>
 
       if err then return cb err
-      return @add description, due, maxPos, cb
+      return @add description, due, maxPos, user, cb
 
     # create a new todo item
     todo = new @todo
@@ -49,7 +50,9 @@ module.exports = class Todo
       done: false
       due: due
       pos: pos
+      user: user
 
+    console.log 'Adding new Todo', todo
     # save it and if successful, return it
     todo.save cb
 
@@ -65,7 +68,7 @@ module.exports = class Todo
       console.log 'Saving item', item
       item.save cb
 
-  del: (id, cb) ->
+  del: (id, user, cb) ->
     @todo.findById id, (err, item) =>
       if err then return cb err
       if !item then return cb new Error "Unable to find todo item #{id}, #{item}"
@@ -76,7 +79,7 @@ module.exports = class Todo
 
         # move all elements below it up the priority chain
         # first get all todo items
-        @todo.find().sort(pos: 1).exec (err, todos) ->
+        @todo.find({user}).sort(pos: 1).exec (err, todos) ->
           if err then cb err
 
           # loop through them and move anything that was higher up down 1
@@ -90,9 +93,9 @@ module.exports = class Todo
           # return the new list to the front end
           cb null, retTodos
 
-  reOrder: (start, end, cb) ->
+  reOrder: (start, end, user, cb) ->
     console.log 'Re-Ordering ', start, end
-    @todo.find().sort(pos: 1).exec (err, todos) ->
+    @todo.find({user}).sort(pos: 1).exec (err, todos) ->
       if err then return cb err
 
       #moved up

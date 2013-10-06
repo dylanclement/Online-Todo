@@ -9,7 +9,7 @@ class window.UserCtrl
     window.scope = @scope
 
     @scope.login = (user) =>
-      @http.post("/auth/login", user)
+      @http.post('/auth/login', user)
         .success (msg) =>
           console.log 'Successfully logged in'
           window.location = '/'
@@ -17,8 +17,8 @@ class window.UserCtrl
 
 
     @scope.register = (user) =>
-      @http.post("/auth/register", user)
+      @http.post('/auth/register', user)
         .success =>
           console.log 'Successfully registered user'
-          window.location = '/'
+          @scope.login user
         .error alert

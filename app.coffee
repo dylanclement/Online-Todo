@@ -7,11 +7,14 @@ path = require 'path'
 passport = require 'passport'
 mongoose = require('mongoose').connect 'mongodb://localhost/todo'
 
+
+###############################################################################
+# Configuration
+###############################################################################
 app = express()
 db = mongoose.connection
 db.on 'error', console.error.bind console, 'connection error:'
 db.once 'open', -> console.log 'Opened connection to DB!'
-
 # all environments
 app.set 'port', process.env.PORT || 3000
 app.set 'views', "#{__dirname}/views"
@@ -39,17 +42,10 @@ app.use (req, res, next) -> req.db = db; next()
 if 'development' == app.get 'env'
   app.use express.errorHandler()
 
-# Simple route middleware to ensure user is authenticated.
-#   Use this route middleware on any resource that needs to be protected.  If
-#   the request is authenticated (typically via a persistent login session),
-#   the request will proceed.  Otherwise, the user will be redirected to the
-#   login page.
-ensureAuthenticated = (req, res, next) ->
-  console.log 'Checking auth', req.isAuthenticated()
-  if req.isAuthenticated() then return next()
-  res.redirect '/login'
 
-# routes
+###############################################################################
+# Authentication routes
+###############################################################################
 app.get '/login', routes.login
 # register a new user
 app.post '/auth/register', routes.register
@@ -59,21 +55,37 @@ app.post '/auth/login', passport.authenticate 'local',
   successRedirect: '/'
   failureRedirect: '/login'
   failureFlash: true
-
 # When the user wants to logout
 app.get '/logout', (req, res) ->
   req.logout()
-  res.redirect '/'
-# Home page for single page app
-app.get '/', ensureAuthenticated, routes.index
+  res.redirect '/login'
 
-# api methods
-app.get '/todos', todoRoutes.list
-app.post '/todos', todoRoutes.add
-app.get '/todo/:id', todoRoutes.get
-app.put '/todo/:id', todoRoutes.update
-app.del '/todo/:id', todoRoutes.del
-app.post '/todos/re-order', todoRoutes.reOrder
+# Simple route middleware to ensure user is authenticated.
+#   Use this route middleware on any resource that needs to be protected.  If
+#   the request is authenticated (typically via a persistent login session),
+#   the request will proceed.  Otherwise, the user will be redirected to the
+#   login page.
+ensureAuthenticated = (req, res, next) ->
+  if req.isAuthenticated() then return next()
+  else if req.body.user and req.body.password then return res.send 'Not authenticated', 401
+  res.redirect '/login'
+
+###############################################################################
+# Application routes
+###############################################################################
+app.get '/', ensureAuthenticated, routes.index # Home page for single page app
+app.all '/app*', ensureAuthenticated
+app.all '/api*', passport.authenticate 'digest', session: false
+app.post '/app/todos/re-order', todoRoutes.reOrder
+app.get /\/ap.\/todos/, todoRoutes.list
+app.post /\/ap.\/todos/, todoRoutes.add
+app.get '/app/todo/:id', todoRoutes.get
+app.get '/api/todo/:id', todoRoutes.get
+app.put '/app/todo/:id', todoRoutes.update
+app.put '/api/todo/:id', todoRoutes.update
+app.del '/app/todo/:id', todoRoutes.del
+app.del '/api/todo/:id', todoRoutes.del
+
 
 http.createServer(app).listen app.get('port'), ->
   console.log "Todo app server listening on port #{app.get('port')}"

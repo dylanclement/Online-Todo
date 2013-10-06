@@ -15,12 +15,11 @@ authenticate = (username, password, cb) ->
     return cb null, user
 
 passport.use new LocalStrategy authenticate
-passport.use new DigestStrategy qop: 'auth',
-  (username, cb) ->
-    userModel.get username, (err, user) ->
-      if err then return cb err
-      if !user then return cb null, false
-      return cb null, user, user.password
+passport.use new DigestStrategy qop: 'auth', (username, cb) ->
+  userModel.get username, (err, user) ->
+    if err then return cb err
+    if !user then return cb null, false
+    return cb null, user, user.password
 
 passport.serializeUser (user, cb) ->
   cb null, user.id
