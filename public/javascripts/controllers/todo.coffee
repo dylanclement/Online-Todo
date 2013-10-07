@@ -13,7 +13,6 @@ class window.TodoCtrl
       # this method might get called before the items are loaded
       if !@scope.todos then return
       console.log 'Sort Mode = ', sortMode
-      # TODO! If sortMode = due date disable sorting the list
       @sortTodos sortMode
 
     @scope.setUser = (username, password, id) =>
@@ -32,6 +31,9 @@ class window.TodoCtrl
           # @sortableEl.refresh()
         .error alert
 
+    @scope.cssClass = (todo) ->
+      if todo.done then return 'done'
+      if new Date(todo.due) <= new Date() then return 'overdue'
 
     @scope.del = (todo) =>
       console.log 'Deleting todo', todo
@@ -86,7 +88,8 @@ class window.TodoCtrl
         .error alert
 
 
-    @sortableEl = $('.sortable').sortable
+    @sortableEl = $('.sortable')
+    @sortableEl.sortable
       start: @scope.dragStart
       update: @scope.dragEnd
 
@@ -106,9 +109,11 @@ class window.TodoCtrl
     if sortMode then @sortMode = sortMode # set the sort mode if it is passed in
 
     if @sortMode == 'Priority'
+      @sortableEl.sortable "enable"
       @scope.todos.sort (a, b) -> return a.pos - b.pos
 
     else if @sortMode == 'DueDate'
+      @sortableEl.sortable "disable"
       @scope.todos.sort (a, b) ->
         return new Date(b.due ? '1970-01-01') - new Date(a.due ? '1970-01-01')
     console.log @scope.todos, @sortMode

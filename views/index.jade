@@ -19,7 +19,7 @@ block content
         button.btn.btn-primary(type='button', ng-model='sortMode', btn-radio="'DueDate'") Due Date
     .content
       ul.row.sortable
-        li.span11.todo-item(ng-repeat='todo in todos', class='done-{{todo.done}}')
+        li.span11.todo-item(ng-repeat='todo in todos', ng-class='cssClass(todo)')
           //- input(type='checkbox', ng-model='todo.done')
           div(ng-hide='todo.editing')
             a.span3(ng-click='editItem(todo)') {{todo.description}}
